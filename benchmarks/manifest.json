@@ -1,0 +1,229 @@
+{
+  "version": "1.0.0",
+  "dataset_id": "syntaxis-benchmark-v1",
+  "description": "Ground-truth benchmark dataset for SYNTAXIS automated vulnerability auditor (Phase F).",
+  "cases": [
+    {
+      "id": "SQL-001",
+      "category": "sql",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-89",
+      "fixture": "benchmarks/fixtures/sql/sql_vuln_fstring.py",
+      "description": "F-string SQL injection with request.args taint source",
+      "rationale": "uid flows from request.args directly into f-string SQL query passed to cursor.execute"
+    },
+    {
+      "id": "SQL-002",
+      "category": "sql",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/sql/sql_safe_parameterized.py",
+      "description": "Parameterized query correctly separates SQL from data",
+      "rationale": "cursor.execute uses %s placeholder with separate tuple argument; no injection possible"
+    },
+    {
+      "id": "SQL-003",
+      "category": "sql",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/sql/sql_static.py",
+      "description": "Static SQL query with no user input",
+      "rationale": "Hard-coded query string with no dynamic data; cannot be injected"
+    },
+    {
+      "id": "CMD-001",
+      "category": "cmd",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-78",
+      "fixture": "benchmarks/fixtures/cmd/cmd_vuln_ossystem.py",
+      "description": "os.system with request.args taint source",
+      "rationale": "cmd flows from request.args directly into os.system without sanitization"
+    },
+    {
+      "id": "CMD-002",
+      "category": "cmd",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/cmd/cmd_safe_arglist.py",
+      "description": "subprocess.run with static arg list and shell=False",
+      "rationale": "No user input; command is a static list preventing shell interpretation"
+    },
+    {
+      "id": "CMD-003",
+      "category": "cmd",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/cmd/cmd_static.py",
+      "description": "os.system with static string argument",
+      "rationale": "Hardcoded command string with no user-controlled data"
+    },
+    {
+      "id": "CMD-004",
+      "category": "cmd",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-78",
+      "fixture": "benchmarks/fixtures/cmd/cmd_vuln_shell_true.py",
+      "description": "subprocess.run with shell=True and tainted input in f-string",
+      "rationale": "pattern from request.args flows into shell=True subprocess call via f-string"
+    },
+    {
+      "id": "PATH-001",
+      "category": "path",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-22",
+      "fixture": "benchmarks/fixtures/path/path_vuln_open.py",
+      "description": "open() with user-controlled path from request.args",
+      "rationale": "path flows from request.args directly into open() without canonicalization"
+    },
+    {
+      "id": "PATH-002",
+      "category": "path",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/path/path_static.py",
+      "description": "open() with hard-coded static path",
+      "rationale": "No user input; path is a hard-coded string constant"
+    },
+    {
+      "id": "PATH-003",
+      "category": "path",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-22",
+      "fixture": "benchmarks/fixtures/path/path_vuln_pathlib.py",
+      "description": "pathlib.Path with request.args user input",
+      "rationale": "user_path from request.args used directly in pathlib.Path without validation"
+    },
+    {
+      "id": "DESER-001",
+      "category": "deser",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-502",
+      "fixture": "benchmarks/fixtures/deser/deser_vuln_pickle.py",
+      "description": "pickle.loads with request.data taint source",
+      "rationale": "data flows from request.data into pickle.loads enabling arbitrary code execution"
+    },
+    {
+      "id": "DESER-002",
+      "category": "deser",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/deser/deser_safe_yaml.py",
+      "description": "yaml.safe_load used instead of dangerous deserializer",
+      "rationale": "yaml.safe_load does not instantiate arbitrary Python objects; no RCE risk"
+    },
+    {
+      "id": "DESER-003",
+      "category": "deser",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-502",
+      "fixture": "benchmarks/fixtures/deser/deser_vuln_pickle_form.py",
+      "description": "pickle.loads with request.form input",
+      "rationale": "raw from request.form encoded then passed to pickle.loads; user-controlled deserialization"
+    },
+    {
+      "id": "XSS-001",
+      "category": "xss",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-79",
+      "fixture": "benchmarks/fixtures/xss/xss_vuln_render.py",
+      "description": "render_template_string with f-string embedding request.args",
+      "rationale": "name from request.args embedded into HTML via render_template_string without escaping"
+    },
+    {
+      "id": "XSS-002",
+      "category": "xss",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/xss/xss_safe_template.py",
+      "description": "render_template uses auto-escaping; user input passed as context variable",
+      "rationale": "Flask render_template with Jinja2 auto-escaping prevents XSS; name passed as safe variable"
+    },
+    {
+      "id": "XSS-003",
+      "category": "xss",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-79",
+      "fixture": "benchmarks/fixtures/xss/xss_vuln_form.py",
+      "description": "render_template_string with request.form concatenation",
+      "rationale": "msg from request.form concatenated directly into HTML string passed to render_template_string"
+    },
+    {
+      "id": "DEPS-001",
+      "category": "deps",
+      "label": "vulnerable",
+      "expected_cwe": null,
+      "expected_package": "requests",
+      "expected_advisory_id": "GHSA-j8r2-6x86-q33q",
+      "expected_fixed_version": "2.31.0",
+      "fixture": "benchmarks/fixtures/deps/requirements_vuln.txt",
+      "description": "requirements.txt with requests==2.6.0 (known vulnerable version)",
+      "rationale": "requests 2.6.0 has SSRF vulnerability GHSA-j8r2-6x86-q33q; fixed in 2.31.0"
+    },
+    {
+      "id": "DEPS-002",
+      "category": "deps",
+      "label": "safe",
+      "expected_cwe": null,
+      "expected_package": "requests",
+      "fixture": "benchmarks/fixtures/deps/requirements_fixed.txt",
+      "description": "requirements.txt with requests==2.31.0 (patched version)",
+      "rationale": "requests 2.31.0 is after the fixed version for known advisories"
+    },
+    {
+      "id": "DEPS-003",
+      "category": "deps",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/deps/requirements_clean.txt",
+      "description": "requirements.txt with only flask==3.0.0, no known vulnerabilities",
+      "rationale": "flask 3.0.0 has no known critical advisories in the benchmark dataset"
+    },
+    {
+      "id": "GRAPH-001",
+      "category": "graph",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-78",
+      "fixture": "benchmarks/fixtures/graph/graph_source_to_sink.py",
+      "description": "Taint flows from request.args through helper function to os.system",
+      "rationale": "get_input() returns request.args; value passed to process() which calls os.system(value)"
+    },
+    {
+      "id": "GRAPH-002",
+      "category": "graph",
+      "label": "safe",
+      "expected_cwe": null,
+      "fixture": "benchmarks/fixtures/graph/graph_safe_equivalent.py",
+      "description": "Same graph structure but uses subprocess.run with shell=False and static list",
+      "rationale": "subprocess.run with list and shell=False prevents shell injection even with user input"
+    },
+    {
+      "id": "REM-001",
+      "category": "remediation",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-89",
+      "expected_strategy": "SQL_PARAMETERIZATION",
+      "fixture": "benchmarks/fixtures/remediation/remediable_sql.py",
+      "description": "SQL injection with f-string; should have a parameterization patch strategy",
+      "rationale": "name from request.args in f-string SQL; SQL_PARAMETERIZATION strategy applies"
+    },
+    {
+      "id": "REM-002",
+      "category": "remediation",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-78",
+      "fixture": "benchmarks/fixtures/remediation/review_required_cmd.py",
+      "description": "Command injection; expects finding but remediation requires manual review",
+      "rationale": "os.system with user input detected; remediation strategy is REQUIRES_REVIEW or similar"
+    },
+    {
+      "id": "SQL-004",
+      "category": "sql",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-89",
+      "fixture": "benchmarks/fixtures/sql/sql_vuln_fstring.py",
+      "description": "Duplicate fixture for cross-validation: same f-string injection pattern",
+      "rationale": "Confirms detection stability across repeated evaluation of the same fixture"
+    }
+  ]
+}
+

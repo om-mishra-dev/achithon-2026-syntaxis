@@ -1,121 +1,309 @@
-<div align="center">
+# SYNTAXIS — Automated Multi-Agent Codebase Vulnerability and Dependency Graph Auditor
 
-# Hackathon Problem-Solving Workspace
+**Problem Statement:** PS05  
+**Hackathon:** Achithon 2026  
+**Version:** 0.1.0
 
-**One repository. Ten problem statements. One focused solution at a time.**
-
-A clean starting point for choosing a challenge, building against its official specification, and preparing an evaluable submission.
-
-</div>
+SYNTAXIS is a fully offline-capable, multi-agent security analysis pipeline for Python and JavaScript codebases. It integrates AST-based SAST, dependency advisory correlation, code relationship graphing, multi-agent reasoning, automated remediation patch generation, and a reproducible benchmarking framework.
 
 ---
 
-## Welcome
+## Architecture
 
-This repository contains ten independent hackathon problem statements in the top-level folders **`PS01` through `PS10`**. Choose one problem statement (PS) to work on. The shared agent instructions are designed to help an AI coding agent understand the selected challenge, respect its evaluation contract, and keep the working checkout focused.
-
-> **Important:** Once you confirm your choice and the disclosed cleanup scope, the agent is instructed to delete the other PS folders from the current checkout. The selected PS folder and files outside the other top-level `PS##` folders are preserved. Make sure you are comfortable with this before confirming.
-
-## Problem statements
-
-| ID | Problem title | Specification |
-|---|---|---|
-| `PS01` | Explainable Application Privacy and Permission Analyzer | See `PS01.md` |
-| `PS02` | Automated Invoice and Payment Reconciliation Dashboard | See `PS02.md` |
-| `PS03` | Targeted Model-Repair and Regression-Evaluation Pipeline | See `PS03.md` |
-| `PS04` | Offline-First Multimodal AI Assistant for Healthcare | See `PS04.md` |
-| `PS05` | Automated Multi-Agent Codebase Vulnerability and Dependency Graph Auditor | See `PS05.md` |
-| `PS06` | FAIRSHIFT: Auditable Allocation and Decision-Support System | See `PS06.md` |
-| `PS07` | REPROTRACE: Pipeline Observability and Reproducibility Tool | See `PS07.md` |
-| `PS08` | AGENTGATE: Security Gateway for AI Actions and Information-Flow Control | See `PS08.md` |
-| `PS09` | FORGETGRAPH: Dependency-Aware Deletion Orchestrator for ML Pipelines | See `PS09.md` |
-| `PS10` | Open Innovation: Hardware / Embedded Systems / IoT Solution | See `PS10.md` |
-
-Replace the placeholder titles and specification links above with the official details in the problem folders. The authoritative statement inside the selected folder defines the challenge requirements.
-
-## Getting started
-
-1. Open the repository and review the available folders and problem statement titles.
-2. Tell your coding agent which PS you want to work on. The agent should list the available PS folders and their exact paths before asking you to choose.
-3. Review the agent's confirmation request carefully. It must identify the selected folder and enumerate every other `PS##` folder that will be removed from this checkout.
-4. Confirm only if the selected PS and deletion scope are correct. Before that confirmation, the agent must not delete, move, or clean any PS folder.
-5. After confirmation and cleanup, read the selected problem's specification and follow its setup, build, test, output, and submission requirements.
-
-If you do not want the other PS folders removed, decline the cleanup and ask to continue with the selected PS while retaining them. The agent should not proceed with destructive cleanup without your explicit consent.
-
-## How selection and cleanup work
-
-```mermaid
-flowchart TD
-    A[Inspect PS01–PS10 without changing files] --> B[Show IDs, titles, and paths]
-    B --> C[Ask user to choose one PS]
-    C --> D[Show exact other PS folders to be removed]
-    D --> E{User confirms selection and cleanup?}
-    E -- No --> F[Delete nothing; clarify whether to proceed without cleanup]
-    E -- Yes --> G[Keep selected PS and shared repository files]
-    G --> H[Remove only confirmed unselected PS folders]
-    H --> I[Verify repository contents]
-    I --> J[Build and validate against selected PS specification]
 ```
-
-The cleanup boundary is limited to the explicitly confirmed, unselected top-level problem folders. Shared code, repository metadata, this README, the top-level `AGENTS.md`, logs, and configuration must remain untouched. Do not use broad wildcard deletion. If you later want to switch to a PS folder that was removed, restore or re-clone it first.
-
-## Repository guide
-
-```text
-.
-├── AGENTS-generalized.md
-├── agent_trace_instructions_generalized.md
-├── README.md
-├── PS01/
-├── PS02/
-├── PS03/
-├── PS04/
-├── PS05/
-├── PS06/
-├── PS07/
-├── PS08/
-├── PS09/
-└── PS10/
+auditor/
+  core/          # Shared models (Finding, ScanResult), config, safety utilities
+  ingestion/     # Local and Git repository ingestion (safe sandboxed staging)
+  scanner/       # File discovery, language detection, manifest detection
+  parser/        # AST parsing (Python via ast, JS via regex-augmented)
+  graph/         # Code relationship graph (NetworkX)
+  sast/          # Deterministic SAST rules (CWE-78, 89, 22, 502, 79)
+  dependencies/  # Manifest parsing (requirements.txt, package.json, pyproject.toml)
+  advisories/    # OSV advisory client with caching, batching, retries
+  agents/        # Multi-agent orchestration (5 specialized agents)
+  remediation/   # Patch generation, isolated workspace, validation, reports
+  evaluation/    # Phase F benchmarking framework
+  cli.py         # Entry point: scan | remediate | evaluate
 ```
-
-Each `PS##/` folder should contain that challenge's participant-facing specification and any allowed starter files or datasets. The actual contents and filenames may differ by problem. Do not assume one PS's input format, output schema, scoring rules, or implementation approach applies to another.
-
-### Agent guidance files
-
-- **`AGENTS-generalized.md`** — primary coding-agent guidance: PS selection and confirmed cleanup, session logging, challenge contract, evaluation safeguards, and cross-platform compatibility. If your coding tool expects a file named `AGENTS.md`, rename or copy this file to that name at the repository root before starting.
-- **`agent_trace_instructions_generalized.md`** — guidance for collecting, reviewing, redacting, and packaging agent traces. Follow the selected PS's submission instructions if they specify a different trace artifact or archive layout.
-
-## Build, test, and submit
-
-There is no single build command or output format shared across all ten problems. After choosing a PS, read its official specification and any README or setup notes in that folder. Use the required language, dependencies, input paths, output schema, runtime interface, and submission artifact exactly as stated there.
-
-Before submitting, verify that:
-
-- The solution uses only allowed inputs and resources.
-- The required output files exist and match the exact specified schema and coverage.
-- The prescribed run and evaluation steps complete successfully.
-- The package contains every required artifact and excludes credentials, secrets, and prohibited files.
-- Any required agent trace or usage report is included in the requested format.
-
-Use the submission URL stated by the selected challenge. Do not guess a URL or substitute a general contest page for an official submission link.
-
-## Safety and working practices
-
-- **Read the selected specification first.** It is authoritative for problem-specific requirements.
-- **Keep secrets out of source control.** Use environment variables or ignored local configuration when the challenge requires credentials.
-- **Protect private data.** Review traces and outputs for API keys, tokens, passwords, cookies, private keys, and sensitive personal information before sharing.
-- **Keep changes scoped.** Work on the selected PS and shared files only; do not bring assumptions or evaluation labels over from another problem.
-- **Retain trace integrity.** Preserve original structured session logs where practical. Redact only sensitive content, and do not include credentials or unrelated application data.
-
-## Contributing or adding problem details
-
-Before using this README as a public project page, replace the placeholder problem titles with the official titles and link each row to the correct participant-facing specification. Add only verified setup and submission information. Keep challenge-specific facts in the relevant `PS##/` folder rather than duplicating them as assumptions in shared instructions.
 
 ---
 
-<div align="center">
+## Supported Languages & CWEs
 
-**Choose carefully. Confirm the cleanup scope. Build to the selected specification.**
+| Language | Parsing | SAST | Dependency Manifests |
+|----------|---------|------|----------------------|
+| Python   | ✅ `ast` module | ✅ Full | `requirements.txt`, `pyproject.toml`, `setup.cfg` |
+| JavaScript/TypeScript | ✅ Regex-augmented | ✅ Partial | `package.json`, `package-lock.json` |
 
-</div>
+| CWE | Description | Severity |
+|-----|-------------|----------|
+| CWE-78 | OS Command Injection | CRITICAL |
+| CWE-89 | SQL Injection | HIGH |
+| CWE-22 | Path Traversal | HIGH |
+| CWE-502 | Insecure Deserialization | CRITICAL |
+| CWE-79 | Cross-Site Scripting (XSS) | MEDIUM |
+
+---
+
+## CLI Commands
+
+### `auditor scan`
+
+Scan a local directory or Git URL for security vulnerabilities.
+
+```bash
+python -m auditor.cli scan <target> [options]
+
+Options:
+  --format terminal,json,markdown,sarif   Output format(s)
+  -o / --output <path>                    Output file path
+  --offline                               Offline mode (no network calls)
+  --no-sast                               Skip SAST analysis
+  --no-deps                               Skip dependency scanning
+  --no-agents                             Skip multi-agent analysis
+  --no-llm                                Use deterministic agent fallback only
+  --llm-provider auto|openai|offline      LLM provider (default: auto)
+  --agent-timeout <seconds>               Per-agent timeout (default: 15)
+  -v / --verbose                          Verbose output
+```
+
+**Example:**
+```bash
+python -m auditor.cli scan ./myproject --offline --no-llm --format json,markdown
+```
+
+### `auditor remediate`
+
+Generate and optionally validate remediation patches for detected findings.
+
+```bash
+python -m auditor.cli remediate <target> [options]
+
+Options:
+  --finding-id <id>     Remediate only a specific finding
+  --output-dir <dir>    Output directory for patches and reports
+  --format json,markdown
+  --offline             Offline mode
+  --no-llm              Deterministic patch strategies only
+  --validate            Run validation on generated patches
+  --run-tests           Run existing tests in isolated workspace
+  -v / --verbose
+```
+
+**Example:**
+```bash
+python -m auditor.cli remediate ./myproject --validate --no-llm
+```
+
+### `auditor evaluate`
+
+Run the benchmark evaluation suite against ground-truth test cases.
+
+```bash
+python -m auditor.cli evaluate [options]
+
+Options:
+  --dataset <path>      Manifest JSON file (default: benchmarks/manifest.json)
+  --output-dir <dir>    Report output directory (default: reports/evaluation)
+  --format json,markdown
+  --offline             Offline mode (recommended for reproducibility)
+  --no-llm              Deterministic mode
+  --category <name>     Filter to a single category (sql, cmd, path, deser, xss, deps, graph, remediation)
+  --case-id <id>        Filter to a single case ID (e.g., SQL-001)
+  -v / --verbose        Show per-case status during run
+```
+
+**Example:**
+```bash
+python -m auditor.cli evaluate --offline --no-llm --verbose
+```
+
+---
+
+## Multi-Agent Architecture
+
+Five specialized agents are coordinated by an **Orchestrator**:
+
+| Agent | Role |
+|-------|------|
+| **Orchestrator** | Coordinates workflow; combines and deduplicates findings |
+| **Code Analysis Agent** | Reviews AST, call graph, and deterministic SAST evidence |
+| **Dependency Security Agent** | Examines manifest declarations and OSV advisory matches |
+| **Data-Flow Analysis Agent** | Traces taint flows from recognized sources to sinks |
+| **Contextual Reasoning Agent** | Evaluates plausibility of findings given code context |
+| **Remediation Agent** | Proposes evidence-grounded remediation advice |
+
+In offline or no-LLM mode, agents run in **OFFLINE_DETERMINISTIC** mode — no LLM API calls are made. All agents complete and contribute deterministic evidence summaries.
+
+---
+
+## Offline Guarantees
+
+SYNTAXIS is fully functional without network access when `--offline` and `--no-llm` are passed:
+
+- **SAST analysis**: Fully offline (AST-based, deterministic rules)
+- **Dependency parsing**: Fully offline (manifest file parsing only)
+- **OSV advisory lookup**: Uses local cache; skips network in offline mode
+- **Agent analysis**: OFFLINE_DETERMINISTIC mode — no LLM calls
+- **Remediation**: Deterministic patch strategies only
+- **Evaluation**: All benchmark fixtures are local files; no network needed
+
+No API keys, tokens, or credentials are required.
+
+---
+
+## Remediation Workflow
+
+1. **Scan** the target to produce findings.
+2. **Patch generation**: Each finding is matched to a deterministic strategy:
+   - `SQL_PARAMETERIZATION` — rewrites f-string/format SQL to parameterized form
+   - `PATH_TRAVERSAL_GUARD` — inserts `is_safe_subpath` validation before `open()`
+   - `SAFE_DESERIALIZATION` — replaces `yaml.load` with `yaml.safe_load`
+   - `DEPENDENCY_VERSION_UPGRADE` — updates pinned version in requirements files
+   - `REQUIRES_REVIEW` / `UNSUPPORTED` — when auto-patch is not safe/possible
+3. **Isolated workspace**: Each patch is applied in a temporary copy of the repository; the original is never modified.
+4. **Validation**: Syntax check, regression check (line count diff), optional SAST re-analysis.
+5. **Report**: JSON and Markdown reports with diff, explanation, and validation status.
+
+---
+
+## Benchmark Format
+
+Benchmark cases are defined in `benchmarks/manifest.json`:
+
+```json
+{
+  "version": "1.0.0",
+  "dataset_id": "syntaxis-benchmark-v1",
+  "cases": [
+    {
+      "id": "SQL-001",
+      "category": "sql",
+      "label": "vulnerable",
+      "expected_cwe": "CWE-89",
+      "fixture": "benchmarks/fixtures/sql/sql_vuln_fstring.py",
+      "description": "F-string SQL injection with request.args taint source",
+      "rationale": "uid flows from request.args into cursor.execute f-string"
+    }
+  ]
+}
+```
+
+**Labels:** `vulnerable` | `safe` | `ambiguous`
+
+- `vulnerable` → scanner must detect a matching CWE → **TP/FN**
+- `safe` → scanner must report no finding → **TN/FP**
+- `ambiguous` → excluded from binary metrics; reported separately
+
+**Categories:** `sql`, `cmd`, `path`, `deser`, `xss`, `deps`, `graph`, `remediation`
+
+---
+
+## Running Tests
+
+```powershell
+# Run the full test suite (190 tests)
+python -m unittest discover -s tests -v
+
+# Run a specific test module
+python -m unittest tests.test_evaluation -v
+python -m unittest tests.test_e2e_scenarios -v
+```
+
+**Requirements:** Python 3.11+, packages in `requirements.txt`.  
+**No pytest required.** All tests use `unittest` from the standard library.
+
+---
+
+## Running the Benchmark Evaluation
+
+```powershell
+# Full benchmark (offline, no LLM)
+python -m auditor.cli evaluate --offline --no-llm --verbose
+
+# Single category
+python -m auditor.cli evaluate --offline --no-llm --category sql
+
+# Single case
+python -m auditor.cli evaluate --offline --no-llm --case-id SQL-001
+```
+
+Reports are saved to `reports/evaluation/evaluation_<run_id>.json` and `.md`.
+
+---
+
+## Phase F Benchmark Results (Offline, No-LLM)
+
+| Metric | Value |
+|--------|-------|
+| Total cases | 24 |
+| True Positives | 11 |
+| True Negatives | 10 |
+| False Positives | 0 |
+| False Negatives | 3 |
+| **Precision** | **1.0000** |
+| **Recall** | **0.7857** |
+| **F1 Score** | **0.8800** |
+| **Accuracy** | **0.8750** |
+
+> FN cases: dep cases in offline mode (OSV not queried) and graph cases where multi-file taint is not traced across function boundaries. These are documented limitations.
+
+---
+
+## End-to-End Demo
+
+```powershell
+# 1. Scan a vulnerable project
+python -m auditor.cli scan ./myproject --offline --no-llm --format json,markdown
+
+# 2. Generate remediation patches
+python -m auditor.cli remediate ./myproject --validate --no-llm
+
+# 3. Run the benchmark evaluation
+python -m auditor.cli evaluate --offline --no-llm --verbose
+```
+
+---
+
+## Known Limitations
+
+| Limitation | Scope |
+|-----------|-------|
+| Transitive dependency resolution | Manifests without lock files only show direct dependencies |
+| Cross-file taint tracking | SAST taint is tracked within a single file; multi-file flows require the code graph |
+| JavaScript AST depth | JS parsing uses regex-augmented analysis; not as deep as Python `ast` module |
+| OSV offline mode | Advisory lookup returns no results when the local cache is empty and `--offline` is set |
+| Deserialization ambiguity | `pickle.loads` on non-tainted data is flagged as CONFIRMED (conservative) |
+| LLM agents | Without `--no-llm`, LLM calls require a configured API key |
+
+---
+
+## Project Structure
+
+```
+achithon-2026-syntaxis/
+  auditor/          # Main package
+  benchmarks/       # Ground-truth benchmark fixtures and manifest
+  tests/            # All test modules (190 tests)
+  reports/          # Scan, remediation, and evaluation reports (generated)
+  AGENTS.md         # Agent workflow instructions
+  PS05.md           # Official problem statement
+  CLAUDE.md         # Project coding instructions
+  README.md         # This file
+  log.txt           # Session and turn log (AGENTS.md §5)
+  pyproject.toml    # Project metadata and dependencies
+  requirements.txt  # Python dependencies
+```
+
+---
+
+## Submission
+
+See `PS05.md` for the official submission URL and instructions.
+
+---
+
+*SYNTAXIS — Built for Achithon 2026 | PS05 | Python 3.13 | Windows/Linux/macOS*
+
+
+

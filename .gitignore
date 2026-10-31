@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Antigravity / agent artifacts (DO NOT PUSH)
+brain/
+
+# Temporary scan/report outputs
+reports/
+remediation-output/
+
+# Secrets / credentials
+.env
+*.env
+secrets.json
+*.key
+*.pem
+
+# OS
+Thumbs.db
+.DS_Store

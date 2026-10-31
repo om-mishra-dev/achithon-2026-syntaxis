@@ -1,0 +1,32 @@
+[
+  {
+    "id": "GHSA-j8r2-6x86-q33q",
+    "summary": "SSRF vulnerability in requests library",
+    "details": "Requests library prior to 2.31.0 is vulnerable to SSRF.",
+    "affected": [
+      {
+        "package": {
+          "name": "requests",
+          "ecosystem": "PyPI"
+        },
+        "ranges": [
+          {
+            "type": "ECOSYSTEM",
+            "events": [
+              {"introduced": "0"},
+              {"fixed": "2.31.0"}
+            ]
+          }
+        ],
+        "versions": ["2.6.0", "2.7.0", "2.20.0", "2.25.0"]
+      }
+    ],
+    "references": [
+      {"type": "ADVISORY", "url": "https://github.com/advisories/GHSA-j8r2-6x86-q33q"}
+    ],
+    "severity": [
+      {"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"}
+    ]
+  }
+]
+
